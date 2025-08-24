@@ -8,7 +8,10 @@ public class PlayerController : MonoBehaviour
     private InputAction m_CrouchAction; 
     private InputAction m_SprintAction;
     [SerializeField] private GameObject m_Model;
-    [SerializeField] private Rigidbody m_Rigidbody;
+    private Rigidbody m_Rigidbody;
+    private Vector2 m_lastAccel = Vector2.zero;
+    [SerializeField] private GameObject m_CamContainer;
+    private Vector3 m_CamPos;
 
     private void OnEnable()
     {
@@ -16,43 +19,67 @@ public class PlayerController : MonoBehaviour
         m_JumpAction = InputSystem.actions.FindAction("Jump");
         m_CrouchAction = InputSystem.actions.FindAction("Crouch");
         m_SprintAction = InputSystem.actions.FindAction("Sprint");
-        m_Rigidbody = GetComponent<Rigidbody>();  
+        m_Rigidbody = GetComponent<Rigidbody>();
+        m_CamPos = m_CamContainer.transform.localPosition;
     }
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
     void Start()
     {
         
     }
 
-    // Update is called once per frame
-    void FixedUpdate()
+    void FixedUpdate()  
     {
-        // Movement input
         Vector2 moveAccel = m_MoveAction.ReadValue<Vector2>();
-        m_Rigidbody.AddForce(50 * new Vector3(moveAccel.x, 0, moveAccel.y), ForceMode.Acceleration);
-
-        // Jumping logic
-        if (Physics.Raycast(transform.position, Vector3.down, 1.1f))
+        if (moveAccel.sqrMagnitude > 0.01f)
         {
-            if (m_JumpAction.IsPressed())
-            {
-                m_Rigidbody.AddForce(5 * Vector3.up, ForceMode.VelocityChange);
-            }
+            m_lastAccel = moveAccel;
+        }
+        m_CamContainer.transform.localPosition = Vector3.Slerp(m_CamContainer.transform.localPosition, m_CamPos + new Vector3(moveAccel.x, 0, moveAccel.y), 0.025f);
+        Quaternion targetRotation;
+        if ((new Vector2(m_Rigidbody.linearVelocity.x, m_Rigidbody.linearVelocity.z)).magnitude > 0.1f)
+        {
+            targetRotation = Quaternion.Euler(0, Mathf.Rad2Deg * Mathf.Atan2(m_Rigidbody.linearVelocity.x, m_Rigidbody.linearVelocity.z), 0);
         }
         else
         {
-            // Apply upward force when not grounded (e.g., floating or falling)
-            m_Rigidbody.AddForce(3 * Vector3.up, ForceMode.Acceleration);
+            targetRotation = Quaternion.Euler(0, Mathf.Rad2Deg * Mathf.Atan2(m_lastAccel.x, m_lastAccel.y), 0);
         }
 
-        // Damping movement
-        m_Rigidbody.AddForce(-5 * m_Rigidbody.linearVelocity, ForceMode.Acceleration);
-
-        // Rotate character based on movement direction
-        if (m_Rigidbody.linearVelocity.x != 0 && m_Rigidbody.linearVelocity.magnitude > 0.1f)
+        // Jumping logic
+        if (Physics.Raycast(transform.position, Vector3.down, 1.125f))
         {
-            m_Model.transform.rotation = Quaternion.Euler(0, Mathf.Rad2Deg * Mathf.Atan2(m_Rigidbody.linearVelocity.x, m_Rigidbody.linearVelocity.z), 0);
+            if (m_JumpAction.IsPressed())
+            {
+                m_Rigidbody.AddForce(3 * Vector3.up, ForceMode.VelocityChange);
+            }
+            if (m_SprintAction.IsPressed())
+            {
+                moveAccel *= 2;
+                targetRotation *= Quaternion.Euler(15, 0, 0);
+            }
+            else if (m_CrouchAction.IsPressed())
+            {
+                moveAccel *= 0.5f;
+            }
+            m_Rigidbody.AddForce(50 * new Vector3(moveAccel.x, 0, moveAccel.y), ForceMode.Acceleration);
+            m_Rigidbody.AddForce(-7.5f * new Vector3(m_Rigidbody.linearVelocity.x, 0, m_Rigidbody.linearVelocity.z), ForceMode.Acceleration);
         }
+        else
+        {
+            if (m_Rigidbody.linearVelocity.x != 0 && m_Rigidbody.linearVelocity.z != 0)
+            {
+                m_Rigidbody.AddForce(10 * new Vector3(moveAccel.x, 0, moveAccel.y), ForceMode.Acceleration);
+            }
+            else
+            {
+                m_Rigidbody.AddForce(2 * new Vector3(moveAccel.x, 0, moveAccel.y), ForceMode.Acceleration);
+            }
+
+                m_Rigidbody.AddForce(-1 * new Vector3(m_Rigidbody.linearVelocity.x, 0, m_Rigidbody.linearVelocity.z), ForceMode.Acceleration);
+        }
+
+        
+        m_Model.transform.rotation = Quaternion.Slerp(m_Model.transform.rotation, targetRotation, 0.4f); 
     }
 
 }
