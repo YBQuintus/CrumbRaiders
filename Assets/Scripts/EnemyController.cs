@@ -15,19 +15,22 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float chaseSpeed;
     [SerializeField] private float detectionDistance;
     [SerializeField] private float detectionAngle;
-    private Vector3 m_LastKnownPosition = Vector3.zero;
+    [SerializeField] private Vector3 m_LastKnownPosition = Vector3.zero;
     private Vector3 m_CurrentPatrolPoint;
     public float TempDetectionDistance;
     public float TempDetectionAngle;
+    public static bool SpottingOverride;
     [SerializeField] private float m_DetectionTimer = 0f;
 
     private void Awake()
     {
         agent = GetComponent<NavMeshAgent>();
         agent.speed = patrolSpeed;
+        TempDetectionDistance = detectionDistance;
         TempDetectionAngle = detectionAngle;
         StartCoroutine(GetPoint());
         m_CurrentPatrolPoint = patrolPoints[Random.Range(0, patrolPoints.Length)];
+        SpottingOverride = false;
     }
 
     private void OnEnable()
@@ -36,11 +39,14 @@ public class EnemyController : MonoBehaviour
         m_SprintAction = InputSystem.actions.FindAction("Sprint");
     }
 
-    private void Update()
+    private void FixedUpdate()
     {
         if (PlayerInSight())
         {
             m_LastKnownPosition = GameManager.Instance.GetPlayerPosition();
+        }
+        if (m_LastKnownPosition != Vector3.zero)
+        {
             m_DetectionTimer += Time.deltaTime;
             if (m_DetectionTimer >= detectionTime)
             {
@@ -55,9 +61,9 @@ public class EnemyController : MonoBehaviour
         else
         {
             m_DetectionTimer -= Time.deltaTime;
-            if (m_DetectionTimer <= 0f)
+            if (m_DetectionTimer <= 0)
             {
-                m_DetectionTimer = 0f;
+                m_DetectionTimer = 0;
             }
             Patrol();
         }
@@ -68,7 +74,7 @@ public class EnemyController : MonoBehaviour
         TempDetectionDistance = detectionDistance;
         if (m_SprintAction.IsPressed())
         {
-            TempDetectionDistance *= 2f;
+            TempDetectionDistance *= 1.5f;
         }
         else if (m_CrouchAction.IsPressed())
         {
@@ -76,7 +82,7 @@ public class EnemyController : MonoBehaviour
         }
         Vector3 directionToPlayer = GameManager.Instance.GetPlayerPosition() - (transform.position + Vector3.up);
         float angle = Vector3.Angle(transform.forward, directionToPlayer);
-        if (directionToPlayer.magnitude < 2.5f)
+        if (directionToPlayer.magnitude < 3f || SpottingOverride)
         {
             return true;
         }   
@@ -114,12 +120,7 @@ public class EnemyController : MonoBehaviour
                 }
                 m_CurrentPatrolPoint = newPatrolPoint;
                 m_LastKnownPosition = Vector3.zero;
-            }
-            else if (m_LastKnownPosition != Vector3.zero)
-            {
-                m_CurrentPatrolPoint = m_LastKnownPosition;
-                agent.speed = chaseSpeed;
-            }
+            } 
             yield return null;
         }
     }
@@ -135,11 +136,16 @@ public class EnemyController : MonoBehaviour
     {
         agent.SetDestination(m_LastKnownPosition);
         agent.speed = chaseSpeed;
-        detectionAngle = 90;
     }
 
     private void OnDestroy()
     {
         StopAllCoroutines();
+    }
+
+    private void OnTriggerEnter(Collider other)
+    {
+        if (!other.CompareTag("Player")) return;
+        GameManager.Instance.EndGame(); 
     }
 }

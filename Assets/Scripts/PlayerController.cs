@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
@@ -23,6 +24,7 @@ public class PlayerController : MonoBehaviour
         m_SprintAction = InputSystem.actions.FindAction("Sprint");
         m_Rigidbody = GetComponent<Rigidbody>();
         m_CamPos = m_CamContainer.transform.localPosition;
+        m_JumpAction.started += Jump;
     }
     void Start()
     {
@@ -51,14 +53,10 @@ public class PlayerController : MonoBehaviour
         }
 
         // Jumping logic
-        if (Physics.Raycast(transform.position, Vector3.down, 1.125f))
+        if (Physics.Raycast(transform.position, Vector3.down, 1))
         {
             Stamina += Time.fixedDeltaTime;
             if (Stamina >= 5) Stamina = 5;
-            if (m_JumpAction.IsPressed())
-            {
-                m_Rigidbody.AddForce(3 * Vector3.up, ForceMode.VelocityChange);
-            }
             if (m_SprintAction.IsPressed())
             {
                 Stamina -= 2 * Time.fixedDeltaTime;
@@ -68,7 +66,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    moveAccel *= 2;
+                    moveAccel *= 1.875f;
                     targetRotation *= Quaternion.Euler(15, 0, 0);
                 }  
             }
@@ -89,12 +87,15 @@ public class PlayerController : MonoBehaviour
             {
                 m_Rigidbody.AddForce(2 * new Vector3(moveAccel.x, 0, moveAccel.y), ForceMode.Acceleration);
             }
-
-                m_Rigidbody.AddForce(-1 * new Vector3(m_Rigidbody.linearVelocity.x, 0, m_Rigidbody.linearVelocity.z), ForceMode.Acceleration);
+            m_Rigidbody.AddForce(-1 * new Vector3(m_Rigidbody.linearVelocity.x, 0, m_Rigidbody.linearVelocity.z), ForceMode.Acceleration);
         }
-
-        
         m_Model.transform.rotation = Quaternion.Slerp(m_Model.transform.rotation, targetRotation, 0.4f); 
     }
-
+    void Jump(InputAction.CallbackContext context)
+    {
+        if (Physics.Raycast(transform.position, Vector3.down, 1))
+        {
+            m_Rigidbody.AddForce(6 * Vector3.up, ForceMode.VelocityChange);
+        }
+    }
 }

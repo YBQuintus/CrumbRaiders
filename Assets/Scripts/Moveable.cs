@@ -10,35 +10,18 @@ public class Moveable : Listener
     [SerializeField] private float moveSpeed;
     private Vector3 unmovedPosition;
     private Vector3 movedPosition;
+    private bool isDown = false;
 
     override protected void CarryOutEvent(object sender, EventArgs e)
     {
         base.CarryOutEvent(sender, e);
-        StartCoroutine(MoveToTarget());
+        isDown = true;
     }
 
     override protected void CarryOutEndEvent(object sender, EventArgs e)
     {
         base.CarryOutEndEvent(sender, e);
-        StartCoroutine(MoveFromTarget());
-    }
-
-    IEnumerator MoveToTarget()
-    {
-        while (moveModel.transform.localPosition != movedPosition)
-        {
-            moveModel.transform.localPosition = Vector3.MoveTowards(moveModel.transform.localPosition, movedPosition, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
-    }
-
-    IEnumerator MoveFromTarget()
-    {
-        while (moveModel.transform.localPosition != unmovedPosition)
-        {
-            moveModel.transform.localPosition = Vector3.MoveTowards(moveModel.transform.localPosition, unmovedPosition, moveSpeed * Time.deltaTime);
-            yield return null;
-        }
+        isDown = false;
     }
 
     override protected void Start()
@@ -46,6 +29,18 @@ public class Moveable : Listener
         base.Start();  
         unmovedPosition = moveModel.transform.localPosition;
         movedPosition = unmovedPosition + moveTarget;
+    }
+
+    private void FixedUpdate()
+    {
+        if (isDown)
+        {
+            moveModel.transform.localPosition = Vector3.MoveTowards(moveModel.transform.localPosition, movedPosition, moveSpeed * Time.deltaTime);
+        }
+        else
+        {
+            moveModel.transform.localPosition = Vector3.MoveTowards(moveModel.transform.localPosition, unmovedPosition, moveSpeed * Time.deltaTime);
+        }
     }
 
     protected override void OnDestroy()

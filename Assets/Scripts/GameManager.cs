@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
+using UnityEngine.SceneManagement;
 
 public class GameManager : MonoBehaviour
 {
@@ -44,9 +45,11 @@ public class GameManager : MonoBehaviour
     {
         InputSystem.actions.Enable();
         PlayerController.LockCam = true;
+        PlayerController.transform.position = new Vector3(0,1,-90); 
     }
     public void EndGame()
     {
         InputSystem.DisableAllEnabledActions();
+        SceneManager.LoadScene("Level1", LoadSceneMode.Single);
     }
 }

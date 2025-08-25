@@ -2,13 +2,17 @@ using UnityEngine;
 
 public class Biscuit : MonoBehaviour
 {
-    [SerializeField] int biscuitValue;
     [SerializeField] float rotateRate;
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
+    public static int totalBiscuits;
+    private void Awake()
+    {
+        totalBiscuits += 1;
+    }
+
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        GameManager.Instance.AddBiscuits(biscuitValue);
+        GameManager.Instance.AddBiscuits(1);
         Destroy(gameObject);
     }
 
