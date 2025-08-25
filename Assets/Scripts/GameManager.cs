@@ -18,6 +18,7 @@ public class GameManager : MonoBehaviour
 
         Instance = this;
         InputSystem.DisableAllEnabledActions();
+        PlayerController.LockCam = false;
     }
 
     private void Update()
@@ -42,6 +43,7 @@ public class GameManager : MonoBehaviour
     public void StartGame()
     {
         InputSystem.actions.Enable();
+        PlayerController.LockCam = true;
     }
     public void EndGame()
     {

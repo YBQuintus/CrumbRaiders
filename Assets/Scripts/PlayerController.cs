@@ -8,10 +8,12 @@ public class PlayerController : MonoBehaviour
     private InputAction m_CrouchAction; 
     private InputAction m_SprintAction;
     [SerializeField] private GameObject m_Model;
+    [SerializeField] private GameObject m_CamContainer;
     private Rigidbody m_Rigidbody;
     private Vector2 m_lastAccel = Vector2.zero;
-    [SerializeField] private GameObject m_CamContainer;
     private Vector3 m_CamPos;
+    public float Stamina;
+    public bool LockCam = true;
 
     private void OnEnable()
     {
@@ -34,7 +36,10 @@ public class PlayerController : MonoBehaviour
         {
             m_lastAccel = moveAccel;
         }
-        m_CamContainer.transform.localPosition = Vector3.Slerp(m_CamContainer.transform.localPosition, m_CamPos + new Vector3(moveAccel.x, 0, moveAccel.y), 0.025f);
+        if (LockCam)
+        {
+            m_CamContainer.transform.localPosition = Vector3.Slerp(m_CamContainer.transform.localPosition, m_CamPos + new Vector3(moveAccel.x, 0, moveAccel.y), 0.025f);
+        }
         Quaternion targetRotation;
         if ((new Vector2(m_Rigidbody.linearVelocity.x, m_Rigidbody.linearVelocity.z)).magnitude > 0.1f)
         {
@@ -48,14 +53,24 @@ public class PlayerController : MonoBehaviour
         // Jumping logic
         if (Physics.Raycast(transform.position, Vector3.down, 1.125f))
         {
+            Stamina += Time.fixedDeltaTime;
+            if (Stamina >= 5) Stamina = 5;
             if (m_JumpAction.IsPressed())
             {
                 m_Rigidbody.AddForce(3 * Vector3.up, ForceMode.VelocityChange);
             }
             if (m_SprintAction.IsPressed())
             {
-                moveAccel *= 2;
-                targetRotation *= Quaternion.Euler(15, 0, 0);
+                Stamina -= 2 * Time.fixedDeltaTime;
+                if (Stamina <= 0)
+                {
+                    Stamina = 0;
+                }
+                else
+                {
+                    moveAccel *= 2;
+                    targetRotation *= Quaternion.Euler(15, 0, 0);
+                }  
             }
             else if (m_CrouchAction.IsPressed())
             {
