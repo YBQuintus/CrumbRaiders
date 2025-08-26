@@ -138,6 +138,14 @@ PrefabInstance:
       propertyPath: m_Name
       value: Quintus' cookie
       objectReference: {fileID: 0}
+    - target: {fileID: 1661007495284504970, guid: 7717eb8ae2849994c9184bd9f4d2e4a2, type: 3}
+      propertyPath: m_ReceiveGI
+      value: 2
+      objectReference: {fileID: 0}
+    - target: {fileID: 7012509476274988224, guid: 7717eb8ae2849994c9184bd9f4d2e4a2, type: 3}
+      propertyPath: m_StaticEditorFlags
+      value: 0
+      objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects:
     - {fileID: -8700617353114198275, guid: 7717eb8ae2849994c9184bd9f4d2e4a2, type: 3}

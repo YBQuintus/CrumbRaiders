@@ -56,7 +56,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     m_Ints: []
     m_Floats:
-    - _Alpha: 0
+    - _Alpha: 1
     - _AlphaClip: 1
     - _AlphaToMask: 0
     - _Blend: 0
@@ -80,7 +80,7 @@ Material:
     - _ZWrite: 0
     - _ZWriteControl: 0
     m_Colors:
-    - _Deep_Colour: {r: 0.99371064, g: 0.99371064, b: 0.99371064, a: 1}
+    - _Deep_Colour: {r: 1, g: 1, b: 1, a: 1}
     - _Shallow_Colour: {r: 1, g: 1, b: 1, a: 1}
     - _Wave_Direction: {r: 1, g: 1, b: 0, a: 0}
   m_BuildTextureStacks: []

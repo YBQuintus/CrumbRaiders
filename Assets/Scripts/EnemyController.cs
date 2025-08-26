@@ -20,6 +20,7 @@ public class EnemyController : MonoBehaviour
     public float TempDetectionDistance;
     public float TempDetectionAngle;
     public static bool SpottingOverride;
+    private Light m_Light;
     [SerializeField] private float m_DetectionTimer = 0f;
 
     private void Awake()
@@ -31,6 +32,7 @@ public class EnemyController : MonoBehaviour
         StartCoroutine(GetPoint());
         m_CurrentPatrolPoint = patrolPoints[Random.Range(0, patrolPoints.Length)];
         SpottingOverride = false;
+        m_Light = GetComponentInChildren<Light>();
     }
 
     private void OnEnable()
