@@ -53,7 +53,7 @@ public class PlayerController : MonoBehaviour
         }
 
         // Jumping logic
-        if (Physics.Raycast(transform.position, Vector3.down, 1))
+        if (Physics.Raycast(transform.position, Vector3.down, 1.125f))
         {
             Stamina += Time.fixedDeltaTime;
             if (Stamina >= 5) Stamina = 5;
@@ -66,7 +66,7 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
-                    moveAccel *= 1.875f;
+                    moveAccel *= 2;
                     targetRotation *= Quaternion.Euler(15, 0, 0);
                 }  
             }
@@ -93,7 +93,7 @@ public class PlayerController : MonoBehaviour
     }
     void Jump(InputAction.CallbackContext context)
     {
-        if (Physics.Raycast(transform.position, Vector3.down, 1))
+        if (Physics.Raycast(transform.position, Vector3.down, 1.125f))
         {
             m_Rigidbody.AddForce(6 * Vector3.up, ForceMode.VelocityChange);
         }

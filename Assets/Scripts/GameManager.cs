@@ -49,7 +49,7 @@ public class GameManager : MonoBehaviour
     }
     public void EndGame()
     {
-        InputSystem.DisableAllEnabledActions();
-        SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+        //InputSystem.DisableAllEnabledActions();
+        //SceneManager.LoadScene("Level1", LoadSceneMode.Single);
     }
 }
