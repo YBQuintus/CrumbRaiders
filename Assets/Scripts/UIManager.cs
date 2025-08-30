@@ -11,7 +11,9 @@ public class UIManager : MonoBehaviour
     private VisualElement convoUI;
     private VisualElement convoBox;
     private Label convoLabel;
+    private VisualElement convoIcon;
     [SerializeField] private Texture2D[] convoUIs;
+    [SerializeField] private Texture2D[] headShotIcons;
     [SerializeField] private string[] convoTexts;
     private int convoIndex = 0;
     private float convoTimer;
@@ -41,6 +43,7 @@ public class UIManager : MonoBehaviour
         convoBox.focusable = true;
         convoBox.Focus();
         convoLabel = convoBox.Q<Label>("ConvoLabel");
+        convoIcon = convoBox.Q<VisualElement>("ConvoIcon");
         endingUI = uiDocument.rootVisualElement.Q<VisualElement>("EndingUI");
         endingUIContainer = endingUI.Q<VisualElement>("EndingUIContainer");
         fadeUI = uiDocument.rootVisualElement.Q<VisualElement>("FadeUI");
@@ -72,6 +75,7 @@ public class UIManager : MonoBehaviour
         cookieText.text = GameManager.Instance.biscuits.ToString() + "/" + Biscuit.totalBiscuits.ToString();
         sprintBarMoving.style.right = Length.Percent(100 - (GameManager.Instance.PlayerController.Stamina / 5) * 100);
         convoBox.style.backgroundImage = new StyleBackground(convoUIs[(int)(Time.unscaledTime * 3 % convoUIs.Length)]);
+        convoIcon.style.backgroundImage = new StyleBackground(headShotIcons[(int)(Time.unscaledTime * 2 % headShotIcons.Length)]);
         convoLabel.text = convoTexts[convoIndex][..(int)Mathf.Clamp(convoTimer, 0, convoTexts[convoIndex].Length)];
     }
 
