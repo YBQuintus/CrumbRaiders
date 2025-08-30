@@ -8,6 +8,9 @@ public class EnemyController : MonoBehaviour
     private InputAction m_CrouchAction;
     private InputAction m_SprintAction;
     private NavMeshAgent agent;
+    private Light m_Light;
+    private AudioSource arrestSound;
+
     [SerializeField] private Vector3[] patrolPoints;
     [SerializeField] private float stopTime;
     [SerializeField] private float detectionTime;
@@ -16,12 +19,15 @@ public class EnemyController : MonoBehaviour
     [SerializeField] private float detectionDistance;
     [SerializeField] private float detectionAngle;
     [SerializeField] private Vector3 m_LastKnownPosition = Vector3.zero;
+    [SerializeField] private float m_DetectionTimer = 0f;
     private Vector3 m_CurrentPatrolPoint;
+    private float m_WaitTime = 0;
     public float TempDetectionDistance;
     public float TempDetectionAngle;
     public static bool SpottingOverride;
-    private Light m_Light;
-    [SerializeField] private float m_DetectionTimer = 0f;
+    
+    
+    
 
     private void Awake()
     {
@@ -33,41 +39,57 @@ public class EnemyController : MonoBehaviour
         m_CurrentPatrolPoint = patrolPoints[Random.Range(0, patrolPoints.Length)];
         SpottingOverride = false;
         m_Light = GetComponentInChildren<Light>();
+        arrestSound = GetComponent<AudioSource>();
     }
 
     private void OnEnable()
     {
         m_CrouchAction = InputSystem.actions.FindAction("Crouch");
         m_SprintAction = InputSystem.actions.FindAction("Sprint");
+        Patrol();
     }
 
     private void FixedUpdate()
     {
         if (PlayerInSight())
         {
-            m_LastKnownPosition = GameManager.Instance.GetPlayerPosition();
-        }
-        if (m_LastKnownPosition != Vector3.zero)
-        {
             m_DetectionTimer += Time.deltaTime;
-            if (m_DetectionTimer >= detectionTime)
-            {
-                m_DetectionTimer = detectionTime;
-                Chase();
-            }
-            else if (m_DetectionTimer > 0f)
-            {
-                LookAtPlayer();
-            }
+            m_LastKnownPosition = GameManager.Instance.GetPlayerPosition();
+            LookAtPlayer();
+            m_WaitTime = 3f;
+        }
+        else if (m_DetectionTimer > 0.125f)
+        {
+            m_LastKnownPosition = GameManager.Instance.GetPlayerPosition();
+            m_DetectionTimer -= Time.deltaTime;
+            m_WaitTime -= Time.deltaTime;
         }
         else
         {
             m_DetectionTimer -= Time.deltaTime;
+            m_WaitTime -= Time.deltaTime;
+        }
+        if (m_LastKnownPosition != Vector3.zero && m_DetectionTimer > 0 || m_WaitTime > 0)
+        {
+            if (m_DetectionTimer >= detectionTime)
+            {
+                m_DetectionTimer = detectionTime;
+                Chase();
+                m_Light.color = Color.darkRed;
+            }
+            else if (m_DetectionTimer > 0f)
+            {
+                m_Light.color = Color.softYellow;
+            }
+        }
+        else
+        {
             if (m_DetectionTimer <= 0)
             {
                 m_DetectionTimer = 0;
             }
             Patrol();
+            m_Light.color = Color.darkGreen;
         }
     }
 
@@ -113,7 +135,7 @@ public class EnemyController : MonoBehaviour
         while (true)
         {
             yield return new WaitForSeconds(stopTime);
-            if (agent.remainingDistance < 0.5f)
+            if (agent.remainingDistance < 0.1f)
             {
                 Vector3 newPatrolPoint = patrolPoints[Random.Range(0, patrolPoints.Length)];
                 while (m_CurrentPatrolPoint == newPatrolPoint)
@@ -129,9 +151,9 @@ public class EnemyController : MonoBehaviour
 
     private void LookAtPlayer()
     {
-        Vector3 directionToPlayer = GameManager.Instance.GetPlayerPosition() - transform.position;
+        Vector3 directionToPlayer = m_LastKnownPosition - transform.position;
         Vector3 lookPosition = Vector3.RotateTowards(transform.forward, directionToPlayer, Time.deltaTime * 3f, 0f);
-        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookPosition), 0.4f);
+        transform.rotation = Quaternion.Slerp(transform.rotation, Quaternion.LookRotation(lookPosition), 0.8f);
         agent.speed = 0f;
     }
     private void Chase()
@@ -148,6 +170,10 @@ public class EnemyController : MonoBehaviour
     private void OnTriggerEnter(Collider other)
     {
         if (!other.CompareTag("Player")) return;
-        GameManager.Instance.EndGame(); 
+        if (!arrestSound.isPlaying)
+        {
+            arrestSound.Play();
+        }
+        GameManager.Instance.EndGame(0); 
     }
 }

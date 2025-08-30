@@ -1,0 +1,31 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" editor-extension-mode="False">
+    <Style src="project://database/Assets/End.uss?fileID=7433441132597879392&amp;guid=0b86fd610e18a6641993dfddea1c38d1&amp;type=3#End" />
+    <ui:VisualElement name="Root" focusable="false" style="flex-grow: 1;">
+        <ui:VisualElement name="GameplayUI" enabled="true" picking-mode="Ignore" style="flex-grow: 1; position: absolute; top: 0%; left: 0%; bottom: 0%; right: 0%; display: none;">
+            <ui:VisualElement name="SprintBarContainer" style="flex-grow: 1; position: absolute; top: 90%; left: 35%; right: 35%; bottom: 0%;">
+                <ui:VisualElement name="SprintBar" style="flex-grow: 1; top: 13%; left: 5%; right: 20%; bottom: 10%; position: absolute; border-left-color: rgb(250, 205, 146); border-right-color: rgb(250, 205, 146); border-top-color: rgb(250, 205, 146); border-bottom-color: rgb(250, 205, 146); background-color: rgb(53, 53, 53); border-top-width: 10px; border-right-width: 10px; border-bottom-width: 10px; border-left-width: 10px; border-top-left-radius: 10px; border-top-right-radius: 10px; border-bottom-right-radius: 10px; border-bottom-left-radius: 10px;">
+                    <ui:VisualElement name="SprintBarMoving" style="flex-grow: 1; background-color: rgb(205, 146, 250); background-size: 100% 100%; position: absolute; bottom: 0%; top: 0%; left: 0%; right: 0%;" />
+                </ui:VisualElement>
+                <ui:VisualElement name="SprintImage" style="flex-grow: 1; top: -20%; bottom: 0%; left: 75%; right: -5%; position: absolute; background-image: url(&quot;project://database/Assets/UI/SprintUIIcon.png?fileID=2800000&amp;guid=be5fc9963acfa1e44a3aba2513b3e37c&amp;type=3#SprintUIIcon&quot;); background-size: 110% 140%;" />
+            </ui:VisualElement>
+            <ui:VisualElement name="CookieStatusContainer" style="flex-grow: 1; position: absolute; top: 0%; left: 42%; right: 42%; bottom: 90%;">
+                <ui:VisualElement name="CookieTextBox" style="flex-grow: 1; top: 10%; left: 20%; right: 5%; bottom: 13%; position: absolute; background-color: rgba(53, 53, 53, 0); opacity: 1;">
+                    <ui:Label text="4/17" name="CookieText" style="-unity-text-align: middle-right; align-self: center; align-content: auto; justify-content: flex-start; align-items: auto; position: absolute; top: 0%; bottom: 0%; left: 0%; right: 0%; -unity-font-definition: url(&quot;project://database/Assets/UI/TF2_fonts/TF2Build.ttf?fileID=12800000&amp;guid=0bfc7a29c1ceb9e4da134c6ccb10ba3d&amp;type=3#TF2Build&quot;); font-size: 70px; -unity-font-style: bold; color: rgb(249, 249, 249); -unity-text-outline-width: 4px; -unity-text-outline-color: rgb(0, 0, 0); text-shadow: 2px 2px 10px rgb(0, 0, 0);" />
+                </ui:VisualElement>
+                <ui:VisualElement name="CookieImage" style="flex-grow: 1; top: 0%; bottom: 0%; left: 0%; right: 55%; position: absolute; background-image: url(&quot;project://database/Assets/UI/CookieUIIcon.png?fileID=2800000&amp;guid=7ab5374ddef554a4f848189e3b1e1b16&amp;type=3#CookieUIIcon&quot;); background-size: 150% 150%; background-position-x: center; background-position-y: top -40px;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="EndingUI" style="flex-grow: 1; position: absolute; top: 0%; left: 0%; right: 0%; bottom: 0%; display: flex; background-color: rgb(0, 0, 0);">
+            <ui:VisualElement name="EndingUIContainer" style="flex-grow: 1;">
+                <ui:Label text="&quot;BLUB BLUB BLUB BLUB&quot;" name="EndingLabel" style="-unity-font-definition: url(&quot;project://database/Assets/UI/TF2_fonts/TF2Build.ttf?fileID=12800000&amp;guid=0bfc7a29c1ceb9e4da134c6ccb10ba3d&amp;type=3#TF2Build&quot;); color: rgb(255, 255, 255); position: absolute; top: 10%; left: 0%; right: 0%; bottom: 50%; align-items: auto; -unity-text-align: middle-center; font-size: 80px; white-space: normal;" />
+                <ui:Button text="RESTART?" name="EndingButton" class="Button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="ConvoUI" style="flex-grow: 1; position: absolute; top: 0%; left: 0%; right: 0%; bottom: 0%; display: none;">
+            <ui:VisualElement name="ConvoBox" style="flex-grow: 1; top: 66%; position: absolute; left: 0%; right: 0%; bottom: 0%; background-image: url(&quot;project://database/Assets/UI/Box1.png?fileID=2800000&amp;guid=27b14c3e8eb5c4541ab6ac261bdf268a&amp;type=3#Box1&quot;); background-color: rgba(0, 0, 0, 0); opacity: 0.98;">
+                <ui:Label text="bla bla bla bla bla bla bla bla bla bla bla bla bla " name="ConvoLabel" picking-mode="Ignore" style="-unity-font-definition: url(&quot;project://database/Assets/UI/TF2_fonts/TF2Build.ttf?fileID=12800000&amp;guid=0bfc7a29c1ceb9e4da134c6ccb10ba3d&amp;type=3#TF2Build&quot;); color: rgb(255, 255, 255); font-size: 60px; -unity-font-style: normal; position: absolute; top: 30%; left: 16%; bottom: 30%; right: 8%; text-overflow: clip; white-space: normal;" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:VisualElement name="FadeUI" picking-mode="Ignore" enabled="true" style="flex-grow: 1; position: absolute; top: 0%; left: 0%; right: 0%; bottom: 0%; display: none; background-color: rgb(0, 0, 0); opacity: 1;" />
+    </ui:VisualElement>
+</ui:UXML>

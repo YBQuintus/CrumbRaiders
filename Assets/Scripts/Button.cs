@@ -4,6 +4,7 @@ public class Button : Interactable
 {
     [SerializeField] private GameObject buttonModel;
     [SerializeField] private float pressDepth;
+    private AudioSource pressSound;
     private Vector3 unpressedPosition;
     private Vector3 pressedPosition;
     private bool decreasing = false;
@@ -12,6 +13,7 @@ public class Button : Interactable
     {
         unpressedPosition = buttonModel.transform.localPosition;
         pressedPosition = unpressedPosition + Vector3.down * pressDepth;
+        pressSound = GetComponent<AudioSource>();
     }
 
     private void Update()
@@ -32,6 +34,7 @@ public class Button : Interactable
         if (other.CompareTag("Player"))
         {
             decreasing = true;
+            pressSound.Play();
         }
     }
 

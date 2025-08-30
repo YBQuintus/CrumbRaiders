@@ -8,6 +8,7 @@ public class Moveable : Listener
     [SerializeField] private Vector3 moveTarget;
     [SerializeField] private GameObject moveModel;
     [SerializeField] private float moveSpeed;
+    private AudioSource moveSound;
     private Vector3 unmovedPosition;
     private Vector3 movedPosition;
     private bool isDown = false;
@@ -16,6 +17,7 @@ public class Moveable : Listener
     {
         base.CarryOutEvent(sender, e);
         isDown = true;
+        moveSound.Play();
     }
 
     override protected void CarryOutEndEvent(object sender, EventArgs e)
@@ -29,6 +31,7 @@ public class Moveable : Listener
         base.Start();  
         unmovedPosition = moveModel.transform.localPosition;
         movedPosition = unmovedPosition + moveTarget;
+        moveSound = GetComponent<AudioSource>();    
     }
 
     private void FixedUpdate()

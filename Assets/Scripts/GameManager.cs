@@ -1,3 +1,5 @@
+using System;
+using System.Collections;
 using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.SceneManagement;
@@ -8,6 +10,7 @@ public class GameManager : MonoBehaviour
     public int biscuits { get; private set; }
     public PlayerController PlayerController;
     public bool startGame;
+    public AudioSource gameMusic;
 
     private void Awake()
     {
@@ -18,8 +21,20 @@ public class GameManager : MonoBehaviour
         }
 
         Instance = this;
-        InputSystem.DisableAllEnabledActions();
+        startGame = false;
         PlayerController.LockCam = false;
+        gameMusic = GetComponent<AudioSource>();
+    }
+
+    public void Start()
+    {
+        StartCoroutine(DisableActions());
+    }
+
+    IEnumerator DisableActions()
+    {
+        yield return new WaitForSeconds(0.1f);
+        InputSystem.actions.actionMaps[0].Disable();
     }
 
     private void Update()
@@ -28,6 +43,10 @@ public class GameManager : MonoBehaviour
         {
             StartGame();
             startGame = false;
+        }
+        else
+        {
+
         }
     }
 
@@ -46,10 +65,19 @@ public class GameManager : MonoBehaviour
         InputSystem.actions.Enable();
         PlayerController.LockCam = true;
         PlayerController.transform.position = new Vector3(0,1,-90); 
+        gameMusic.Play();
     }
-    public void EndGame()
+    public void EndGame(int index)
     {
-        //InputSystem.DisableAllEnabledActions();
-        //SceneManager.LoadScene("Level1", LoadSceneMode.Single);
+        InputSystem.actions.actionMaps[0].Disable();
+        PlayerController.transform.position = new Vector3(0, 1, -90);
+        gameMusic.Stop();
+        GetComponentInChildren<UIManager>().ShowEnding(index);
+        Biscuit.totalBiscuits = 0;
+    }
+
+    public void Restart()
+    {
+        SceneManager.LoadScene(SceneManager.GetActiveScene().name, LoadSceneMode.Single);
     }
 }

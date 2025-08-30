@@ -4,6 +4,7 @@ public class CutOut : MonoBehaviour
 {
     [SerializeField] private Transform target;
     [SerializeField] private LayerMask wallMask;
+    [SerializeField] private Vector2 cutOutOffset;
 
     private Camera mainCamera;
 
@@ -15,6 +16,7 @@ public class CutOut : MonoBehaviour
     private void Update()
     {
         Vector2 cutOutPos = mainCamera.WorldToViewportPoint(target.position);
+        cutOutPos += cutOutOffset;
         cutOutPos.y /= (Screen.width / Screen.height);
 
         Vector3 offset = target.position - transform.position;

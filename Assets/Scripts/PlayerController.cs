@@ -10,11 +10,14 @@ public class PlayerController : MonoBehaviour
     private InputAction m_SprintAction;
     [SerializeField] private GameObject m_Model;
     [SerializeField] private GameObject m_CamContainer;
+    [SerializeField] private AudioSource m_WalkSound;
+    [SerializeField] private AudioSource m_SprintSound;
     private Rigidbody m_Rigidbody;
     private Vector2 m_lastAccel = Vector2.zero;
     private Vector3 m_CamPos;
     public float Stamina;
     public bool LockCam = true;
+    
 
     private void OnEnable()
     {
@@ -26,6 +29,11 @@ public class PlayerController : MonoBehaviour
         m_CamPos = m_CamContainer.transform.localPosition;
         m_JumpAction.started += Jump;
     }
+
+    private void OnDestroy()
+    {
+        m_JumpAction.started -= Jump;
+    }
     void Start()
     {
         
@@ -36,7 +44,16 @@ public class PlayerController : MonoBehaviour
         Vector2 moveAccel = m_MoveAction.ReadValue<Vector2>();
         if (moveAccel.sqrMagnitude > 0.01f)
         {
+            if (!m_WalkSound.isPlaying)
+            {
+                m_WalkSound.Play();
+            }
             m_lastAccel = moveAccel;
+        }
+        else 
+        {
+            m_WalkSound.Stop();
+            m_SprintSound.Stop();
         }
         if (LockCam)
         {
@@ -66,6 +83,11 @@ public class PlayerController : MonoBehaviour
                 }
                 else
                 {
+                    if (!m_SprintSound.isPlaying)
+                    {
+                        m_SprintSound.Play();
+                    }
+                    m_WalkSound.Stop();
                     moveAccel *= 2;
                     targetRotation *= Quaternion.Euler(15, 0, 0);
                 }  
@@ -79,6 +101,8 @@ public class PlayerController : MonoBehaviour
         }
         else
         {
+            m_SprintSound.Stop();
+            m_WalkSound.Stop();
             if (m_Rigidbody.linearVelocity.x != 0 && m_Rigidbody.linearVelocity.z != 0)
             {
                 m_Rigidbody.AddForce(10 * new Vector3(moveAccel.x, 0, moveAccel.y), ForceMode.Acceleration);
@@ -93,9 +117,9 @@ public class PlayerController : MonoBehaviour
     }
     void Jump(InputAction.CallbackContext context)
     {
-        if (Physics.Raycast(transform.position, Vector3.down, 1.125f))
+        if (Physics.Raycast(transform.position, Vector3.down, 1.25f))
         {
-            m_Rigidbody.AddForce(6 * Vector3.up, ForceMode.VelocityChange);
+            m_Rigidbody.AddForce(8 * Vector3.up, ForceMode.VelocityChange);
         }
     }
 }
