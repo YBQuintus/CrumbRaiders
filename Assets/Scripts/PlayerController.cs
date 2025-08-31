@@ -12,6 +12,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private GameObject m_CamContainer;
     [SerializeField] private AudioSource m_WalkSound;
     [SerializeField] private AudioSource m_SprintSound;
+    [SerializeField] private AudioSource m_JumpSound;
     private Rigidbody m_Rigidbody;
     private Vector2 m_lastAccel = Vector2.zero;
     private Vector3 m_CamPos;
@@ -120,6 +121,7 @@ public class PlayerController : MonoBehaviour
         if (Physics.Raycast(transform.position, Vector3.down, 1.25f))
         {
             m_Rigidbody.AddForce(8 * Vector3.up, ForceMode.VelocityChange);
+            m_JumpSound.Play();
         }
     }
 }

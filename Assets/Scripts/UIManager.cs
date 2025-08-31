@@ -21,7 +21,7 @@ public class UIManager : MonoBehaviour
     private VisualElement endingUIContainer;
     [SerializeField]
     private VisualElement fadeUI;
-    private float opacity = 2;
+    private float opacity = 1.5f;
 
     void HideAll()
     {
